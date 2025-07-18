@@ -1,2 +1,2 @@
-# Sponsorship-Dashboard
-Sponsorship Management Dashboard Web Application
+# Sponsorship-Platform
+Sponsorship Management Web Application
