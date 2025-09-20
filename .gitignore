@@ -98,3 +98,10 @@ dist
 # Storybook build outputs
 .out
 .storybook-out
+
+# Documentation files to ignore
+WARP.md
+SUPABASE_MIGRATIONS_FIXED.md
+SUPABASE_MIGRATIONS.md
+Sponsorship Dashboard Figma Mockup.png
+SPONSOR_MANAGEMENT_TEST.md
