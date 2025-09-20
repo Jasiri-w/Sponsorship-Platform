@@ -2,6 +2,8 @@
 
 A comprehensive web application for managing sponsorship partnerships, tiers, and events.
 
+<img width="1860" height="359" alt="image" src="https://github.com/user-attachments/assets/b5a0f6f3-22d4-4baf-b8f8-ce1aa57b72bd" />
+
 ## Features
 
 - **Dashboard**: Overview of sponsors, total sponsorship amounts, and upcoming events
