@@ -2,8 +2,6 @@
 
 A comprehensive web application for managing sponsorship partnerships, tiers, and events.
 
-![Sponsorship Platform Dashboard](./Sponsorship%20Dashboard%20Figma%20Mockup.png)
-
 ## Features
 
 - **Dashboard**: Overview of sponsors, total sponsorship amounts, and upcoming events
