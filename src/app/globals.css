@@ -1,0 +1,134 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+:root {
+  --background: #fff;
+  --foreground: #171717;
+  
+  /* League Spartan Font Variables */
+  --font-league-spartan: var(--font-league-spartan);
+  --font-league-spartan-light: var(--font-league-spartan-light);
+  --font-league-spartan-regular: var(--font-league-spartan-regular);
+  --font-league-spartan-medium: var(--font-league-spartan-medium);
+  --font-league-spartan-semibold: var(--font-league-spartan-semibold);
+  --font-league-spartan-bold: var(--font-league-spartan-bold);
+  --font-league-spartan-extrabold: var(--font-league-spartan-extrabold);
+  --font-league-spartan-black: var(--font-league-spartan-black);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-league-spartan), Inter, system-ui, sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-100 p-6 font-spartan;
+  }
+  
+  .card-header {
+    @apply border-b border-gray-100 pb-4 mb-4;
+  }
+  
+  .btn-primary {
+    @apply bg-salmon-500 hover:bg-salmon-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-spartan-medium tracking-tight;
+  }
+  
+  .btn-secondary {
+    @apply bg-[#7bd96c] hover:bg-[#65b559] text-white px-4 py-2 rounded-lg transition-colors duration-200 font-spartan-medium tracking-tight;
+  }
+  
+  .btn-danger {
+    @apply bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 font-spartan-medium tracking-tight;
+  }
+  
+  .input-field, input, textarea{
+    @apply text-gray-900 w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-salmon-500 focus:border-transparent font-spartan;
+  }
+  
+  .sponsor-card {
+    @apply bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-lg hover:shadow-salmon-500 transition-shadow duration-200 font-spartan;
+  }
+  
+  .tier-badge {
+    @apply inline-flex items-center px-2.5 pt-1 rounded-full text-xs font-spartan-semibold tracking-wide uppercase;
+  }
+  
+  
+  .tier-bronze {
+    @apply bg-orange-800 text-white;
+  }
+  
+  .tier-silver {
+    @apply bg-cyan-400 text-white;
+  }
+  
+  .tier-gold {
+    @apply bg-yellow-400 text-white;
+  }
+  
+  .tier-quartz {
+    @apply bg-white text-black;
+  }
+
+  .tier-emerald {
+    @apply bg-emerald-500 text-white;
+  }
+  
+  .tier-diamond {
+    @apply bg-black text-white;
+  }
+  
+  /* Typography Utilities */
+  .heading-xl {
+    @apply font-spartan-black text-4xl md:text-5xl tracking-tight;
+  }
+  
+  .heading-lg {
+    @apply font-spartan-bold text-3xl md:text-4xl tracking-tight;
+  }
+  
+  .heading-md {
+    @apply font-spartan-bold text-2xl md:text-3xl tracking-tight;
+  }
+  
+  .heading-sm {
+    @apply font-spartan-semibold text-xl md:text-2xl tracking-tight;
+  }
+  
+  .heading-xs {
+    @apply font-spartan-semibold text-lg tracking-tight;
+  }
+  
+  .subheading {
+    @apply font-spartan-medium text-base text-gray-600 tracking-normal;
+  }
+  
+  .body-text {
+    @apply font-spartan text-gray-700 tracking-normal leading-relaxed;
+  }
+  
+  .label-text {
+    @apply font-spartan-medium text-sm text-gray-700 tracking-normal;
+  }
+
+  .layout-container {
+    @apply min-h-screen  mx-auto px-2 pt-2 sm:px-6 lg:px-8 bg-white lg:pt-16;
+  }
+}
