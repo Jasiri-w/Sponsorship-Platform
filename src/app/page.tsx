@@ -212,11 +212,9 @@ function DashboardContent() {
                   <div key={sponsor.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50">
                     <div className="flex-shrink-0">
                       {sponsor.logo_url ? (
-                        <Image
+                        <img
                           src={sponsor.logo_url}
                           alt={`${sponsor.name} logo`}
-                          width={40}
-                          height={40}
                           className="h-10 w-10 rounded-lg object-contain"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
@@ -319,11 +317,9 @@ function DashboardContent() {
                                   title={sponsor.name}
                                 >
                                   {sponsor.logo_url ? (
-                                    <Image
+                                    <img
                                       src={sponsor.logo_url}
                                       alt={`${sponsor.name} logo`}
-                                      width={24}
-                                      height={24}
                                       className="w-full h-full object-contain"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;

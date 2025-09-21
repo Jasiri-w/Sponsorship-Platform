@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
-import Image from 'next/image'
 import { ArrowLeft, Edit, Mail, Phone, User, Building, CheckCircle, Clock, ExternalLink, FileText, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { SponsorWithTier, SponsorStatus } from '@/types/database'
@@ -244,11 +243,9 @@ function SponsorDetailContent() {
                 <div className="border-2 border-dashed border-gray-200 rounded-lg p-6">
                   {sponsor.logo_url ? (
                     <div className="text-center">
-                      <Image
+                      <img
                         src={sponsor.logo_url}
                         alt={`${sponsor.name} logo`}
-                        width={200}
-                        height={128}
                         className="max-w-full max-h-32 mx-auto rounded-lg object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement

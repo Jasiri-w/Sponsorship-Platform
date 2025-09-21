@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { Plus, Search, Filter, Users, Edit, Eye, CheckCircle, Clock, FileText, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { SponsorWithTier, SponsorStatus } from '@/types/database'
@@ -253,11 +252,10 @@ function SponsorsContent() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
                   {sponsor.logo_url ? (
-                    <Image
+                    <img
                       src={sponsor.logo_url}
                       alt={sponsor.name}
-                      width={48}
-                      height={48}
+                      style={{width: '48px', height: '48px'}}
                       className="rounded-lg object-cover"
                     />
                   ) : (

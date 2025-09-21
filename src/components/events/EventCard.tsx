@@ -4,7 +4,6 @@ import { useState, useEffect } from 'react'
 import { EventWithSponsors } from '@/types/events'
 import { Calendar, Users, MapPin, Edit, Trash2 } from 'lucide-react'
 import { formatDate, getWeekday, isPastDate, isFutureDate, getEventStatus } from '@/lib/dateUtils'
-import Image from 'next/image'
 import Link from 'next/link'
 
 interface EventCardProps {
@@ -131,11 +130,9 @@ export function EventCard({ event, onEdit, onDelete, showActions = true }: Event
                   title={sponsor.name}
                 >
                   {sponsor.logo_url ? (
-                    <Image
+                    <img
                       src={sponsor.logo_url}
                       alt={`${sponsor.name} logo`}
-                      width={40}
-                      height={40}
                       className="h-10 w-10 rounded-lg object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
