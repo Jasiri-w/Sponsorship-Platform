@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Plus, Search, Filter, Users, Edit, Eye, CheckCircle, Clock, FileText, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { SponsorWithTier, SponsorStatus } from '@/types/database'
@@ -26,11 +27,7 @@ function SponsorsContent() {
     return () => clearTimeout(timeoutId)
   }, [searchTerm])
 
-  useEffect(() => {
-    fetchSponsors()
-  }, [debouncedSearchTerm, statusFilter])
-
-  const fetchSponsors = async () => {
+  const fetchSponsors = useCallback(async () => {
     try {
       // Fetch all sponsors with their tier information using Supabase for consistency
       const { data: sponsorsData, error } = await supabase
@@ -58,7 +55,7 @@ function SponsorsContent() {
       
       // Filter by search term
       if (debouncedSearchTerm) {
-        filtered = filtered.filter(sponsor =>
+        filtered = filtered.filter((sponsor: any) =>
           sponsor.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
           sponsor.contact_email?.toLowerCase().includes(debouncedSearchTerm.toLowerCase()) ||
           sponsor.tier?.name.toLowerCase().includes(debouncedSearchTerm.toLowerCase())
@@ -67,7 +64,7 @@ function SponsorsContent() {
 
       // Filter by status
       if (statusFilter !== 'all') {
-        filtered = filtered.filter(sponsor =>
+        filtered = filtered.filter((sponsor: any) =>
           sponsor.status === statusFilter
         )
       }
@@ -79,8 +76,11 @@ function SponsorsContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [debouncedSearchTerm, statusFilter])
 
+  useEffect(() => {
+    fetchSponsors()
+  }, [fetchSponsors])
 
   const getTierBadgeClass = (tierName: string) => {
     const name = tierName.toLowerCase()
@@ -158,7 +158,7 @@ function SponsorsContent() {
           <h1 className="heading-lg text-gray-900">Sponsors</h1>
           <p className="subheading mt-1">Manage your sponsorship partners</p>
         </div>
-        {canEditContent && (
+        {canEditContent() && (
           <Link href="/sponsors/add" className="btn-primary">
             <Plus className="h-4 w-4 mr-2 inline" />
             Add Sponsor
@@ -207,20 +207,20 @@ function SponsorsContent() {
         </div>
         <div className="card">
           <div className="text-center">
-            <p className="text-2xl font-bold text-orange-600">{sponsors.filter(s => s.status === 'Completed').length}</p>
+            <p className="text-2xl font-bold text-orange-600">{sponsors.filter((s: any) => s.status === 'Completed').length}</p>
             <p className="text-sm text-gray-500">Completed</p>
           </div>
         </div>
         <div className="card">
           <div className="text-center">
-            <p className="text-2xl font-bold text-green-600">{sponsors.filter(s => s.status === 'Fulfilled').length}</p>
+            <p className="text-2xl font-bold text-green-600">{sponsors.filter((s: any) => s.status === 'Fulfilled').length}</p>
             <p className="text-sm text-gray-500">Fulfilled</p>
           </div>
         </div>
         <div className="card">
           <div className="text-center">
             <p className="text-2xl font-bold text-salmon-600">
-              {formatCurrency(sponsors.reduce((sum, s) => sum + (s.tier?.amount || 0), 0))}
+              {formatCurrency(sponsors.reduce((sum: number, s: any) => sum + (s.tier?.amount || 0), 0))}
             </p>
             <p className="text-sm text-gray-500">Total Value</p>
           </div>
@@ -240,7 +240,7 @@ function SponsorsContent() {
               : 'Get started by adding your first sponsor'
             }
           </p>
-          {!searchTerm && statusFilter === 'all' && canEditContent && (
+          {!searchTerm && statusFilter === 'all' && canEditContent() && (
             <Link href="/sponsors/add" className="btn-primary">
               Add Your First Sponsor
             </Link>
@@ -253,7 +253,7 @@ function SponsorsContent() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center space-x-3">
                   {sponsor.logo_url ? (
-                    <img
+                    <Image
                       src={sponsor.logo_url}
                       alt={sponsor.name}
                       width={48}
@@ -302,7 +302,7 @@ function SponsorsContent() {
                   <Eye className="h-4 w-4 mr-1" />
                   View
                 </Link>
-                {canEditContent && (
+                {canEditContent() && (
                   <Link
                     href={`/sponsors/${sponsor.id}/edit`}
                     className="flex items-center text-gray-600 hover:text-gray-700 text-sm font-medium"

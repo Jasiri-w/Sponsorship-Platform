@@ -66,7 +66,7 @@ export async function GET(request: NextRequest) {
     // Apply status filter if provided
     let filteredSponsors = sponsorsWithStatus
     if (status && status !== 'all') {
-      filteredSponsors = sponsorsWithStatus.filter(sponsor => sponsor.status === status)
+      filteredSponsors = sponsorsWithStatus.filter((sponsor: any) => sponsor.status === status)
     }
 
     return NextResponse.json({

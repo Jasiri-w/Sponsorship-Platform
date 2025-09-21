@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect, use } from 'react'
+import { useState, useEffect, use, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import { EventWithSponsors, UpdateEventRequest } from '@/types/events'
-import { Sponsor } from '@/types/sponsors'
+import { SponsorWithTier } from '@/types/database'
 import { EventForm } from '@/components/events/EventForm'
 import { formatDateWithWeekday, getEventStatus } from '@/lib/dateUtils'
 import { 
@@ -38,7 +38,7 @@ function EventDetailContent({ params }: EventPageProps) {
   const [isUpdating, setIsUpdating] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [mounted, setMounted] = useState(false)
-  const [availableSponsors, setAvailableSponsors] = useState<Sponsor[]>([])
+  const [availableSponsors, setAvailableSponsors] = useState<SponsorWithTier[]>([])
   const [loadingSponsors, setLoadingSponsors] = useState(false)
 
   // Handle hydration
@@ -47,7 +47,7 @@ function EventDetailContent({ params }: EventPageProps) {
   }, [])
 
   // Fetch event details using direct Supabase query
-  const fetchEvent = async () => {
+  const fetchEvent = useCallback(async () => {
     if (!mounted || !resolvedParams?.id) return
     
     try {
@@ -102,11 +102,11 @@ function EventDetailContent({ params }: EventPageProps) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [mounted, resolvedParams?.id])
 
   useEffect(() => {
     fetchEvent()
-  }, [mounted, resolvedParams?.id])
+  }, [fetchEvent])
 
   const handleUpdateEvent = async (eventData: UpdateEventRequest) => {
     try {
@@ -357,7 +357,7 @@ function EventDetailContent({ params }: EventPageProps) {
             </div>
           </div>
           
-          {canEditContent && (
+          {canEditContent() && (
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setIsEditing(true)}
@@ -425,7 +425,7 @@ function EventDetailContent({ params }: EventPageProps) {
                 <p className="text-gray-500 mb-4">
                   Add sponsors to this event to track partnerships and collaborations.
                 </p>
-                {canEditContent && (
+                {canEditContent() && (
                   <button
                     onClick={() => setIsEditing(true)}
                     className="btn-primary flex items-center gap-2 mx-auto"
@@ -467,7 +467,7 @@ function EventDetailContent({ params }: EventPageProps) {
           </div>
 
           {/* Actions */}
-          {canEditContent && (
+          {canEditContent() && (
             <div className="bg-white rounded-lg shadow-sm border p-6">
               <h3 className="font-semibold text-gray-900 mb-4">Actions</h3>
               <div className="space-y-2">

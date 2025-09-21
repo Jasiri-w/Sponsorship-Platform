@@ -131,9 +131,11 @@ export function EventCard({ event, onEdit, onDelete, showActions = true }: Event
                   title={sponsor.name}
                 >
                   {sponsor.logo_url ? (
-                    <img
+                    <Image
                       src={sponsor.logo_url}
                       alt={`${sponsor.name} logo`}
+                      width={40}
+                      height={40}
                       className="h-10 w-10 rounded-lg object-contain"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement

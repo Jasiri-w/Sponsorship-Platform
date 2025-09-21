@@ -75,7 +75,7 @@ export default function VerifyEmailPage() {
             Check Your Email
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            We've sent a verification link to{' '}
+            We&apos;ve sent a verification link to{' '}
             <span className="font-medium text-gray-900">{user?.email}</span>
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function VerifyEmailPage() {
 
             <div className="text-sm">
               <p className="text-gray-600 mb-2">
-                Can't find the email? Check your spam folder.
+                Can&apos;t find the email? Check your spam folder.
               </p>
               <Link
                 href="/auth/login"
@@ -147,7 +147,7 @@ export default function VerifyEmailPage() {
               <li>Check your email for the verification link</li>
               <li>Click the link to verify your email address</li>
               <li>Wait for approval from a Sponsorship Chair</li>
-              <li>Once approved, you'll have access to all features</li>
+              <li>Once approved, you&apos;ll have access to all features</li>
             </ol>
           </div>
         </div>

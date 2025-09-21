@@ -91,13 +91,13 @@ export default function Layout({ children }: LayoutProps) {
                 {isAuthenticated ? (
                   <div className="flex items-center space-x-2">
                     {isSponsorshipChair && (
-                      <Crown className="h-4 w-4 text-purple-500" title="Sponsorship Chair" />
+                      <Crown className="h-4 w-4 text-purple-500" />
                     )}
                     {!isEmailVerified && (
-                      <Clock className="h-4 w-4 text-blue-500" title="Email not verified" />
+                      <Clock className="h-4 w-4 text-blue-500" />
                     )}
                     {isEmailVerified && !isApproved && (
-                      <Clock className="h-4 w-4 text-yellow-500" title="Pending approval" />
+                      <Clock className="h-4 w-4 text-yellow-500" />
                     )}
                     <button
                       onClick={handleSignOut}
@@ -153,13 +153,13 @@ export default function Layout({ children }: LayoutProps) {
                 {isAuthenticated ? (
                   <div className="flex items-center space-x-2">
                     {isSponsorshipChair && (
-                      <Crown className="h-4 w-4 text-purple-500" title="Sponsorship Chair" />
+                      <Crown className="h-4 w-4 text-purple-500" />
                     )}
                     {!isEmailVerified && (
-                      <Clock className="h-4 w-4 text-blue-500" title="Email not verified" />
+                      <Clock className="h-4 w-4 text-blue-500" />
                     )}
                     {isEmailVerified && !isApproved && (
-                      <Clock className="h-4 w-4 text-yellow-500" title="Pending approval" />
+                      <Clock className="h-4 w-4 text-yellow-500" />
                     )}
                     <button
                       onClick={handleSignOut}

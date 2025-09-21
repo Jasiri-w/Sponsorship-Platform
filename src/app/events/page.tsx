@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { EventWithSponsors, EventFilters } from '@/types/events'
 import { EventCard } from '@/components/events/EventCard'
 import { EventFiltersComponent } from '@/components/events/EventFilters'
@@ -31,7 +31,7 @@ function EventsContent() {
   }, [])
 
   // Fetch events with filters using direct Supabase query
-  const fetchEvents = async (currentFilters: EventFilters = filters) => {
+  const fetchEvents = useCallback(async (currentFilters: EventFilters = filters) => {
     if (!mounted) return
     
     try {
@@ -100,21 +100,21 @@ function EventsContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [mounted, filters])
 
   // Initial fetch
   useEffect(() => {
     if (mounted) {
       fetchEvents()
     }
-  }, [mounted])
+  }, [mounted, fetchEvents])
 
   // Fetch when filters change
   useEffect(() => {
     if (mounted && (Object.keys(filters).length > 0 || events.length > 0)) {
       fetchEvents(filters)
     }
-  }, [filters, mounted])
+  }, [filters, mounted, events.length, fetchEvents])
 
   const handleFiltersChange = (newFilters: EventFilters) => {
     setFilters(newFilters)
@@ -202,7 +202,7 @@ function EventsContent() {
           )}
         </div>
         
-        {canEditContent && (
+        {canEditContent() && (
           <Link href="/events/new" className="btn-primary flex items-center gap-2">
             <Plus className="w-4 w-4" />
             Add Event
@@ -259,7 +259,7 @@ function EventsContent() {
                 Clear Filters
               </button>
             ) : null}
-            {canEditContent && (
+            {canEditContent() && (
               <Link href="/events/new" className="btn-primary">
                 Create Your First Event
               </Link>
@@ -271,11 +271,11 @@ function EventsContent() {
               <EventCard
                 key={event.id}
                 event={event}
-                onEdit={canEditContent ? (event) => {
+                onEdit={canEditContent() ? (event) => {
                   // Navigate to edit page
                   window.location.href = `/events/${event.id}`
                 } : undefined}
-                onDelete={canEditContent ? handleDeleteClick : undefined}
+                onDelete={canEditContent() ? handleDeleteClick : undefined}
               />
             ))}
           </div>

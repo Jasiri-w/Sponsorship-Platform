@@ -2,9 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, Link as LinkIcon } from 'lucide-react'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase'
-import type { Sponsor, Tier, SponsorFormData } from '@/types/database'
+import { Link as LinkIcon, Save } from 'lucide-react'
+import type { Sponsor, Tier } from '@/types/database'
+import ProtectedRoute from '@/components/auth/ProtectedRoute'
+
+interface SponsorFormData {
+  name: string
+  tier_id: string
+  contact_name: string
+  contact_email: string
+  contact_phone: string
+  fulfilled: boolean
+  address: string
+  sponsorship_agreement_url: string
+  receipt_url: string
+}
 
 interface SponsorFormProps {
   sponsor?: Sponsor
@@ -184,9 +198,11 @@ export default function SponsorForm({ sponsor, isEditing = false }: SponsorFormP
                     <div className="border border-gray-200 rounded-lg p-4">
                       <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
                       <div className="flex items-center justify-center bg-gray-50 rounded-lg p-4">
-                        <img
+                        <Image
                           src={logoUrl}
                           alt="Logo preview"
+                          width={128}
+                          height={96}
                           className="max-h-24 max-w-32 object-contain rounded"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement

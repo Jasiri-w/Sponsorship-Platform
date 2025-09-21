@@ -3,22 +3,12 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { EventForm } from '@/components/events/EventForm'
-import { CreateEventRequest } from '@/types/events'
-import { Sponsor } from '@/types/sponsors'
+import { CreateEventRequest, UpdateEventRequest } from '@/types/events'
+import { SponsorWithTier } from '@/types/database'
 import { supabase } from '@/lib/supabase'
 import { ArrowLeft, Calendar, Plus } from 'lucide-react'
 import Link from 'next/link'
 import ProtectedRoute from '@/components/auth/ProtectedRoute'
-
-// Define the SponsorWithTier interface to match EventForm expectations
-interface SponsorWithTier extends Sponsor {
-  tiers: {
-    id: string
-    name: string
-    amount: number
-    type: string
-  }[]
-}
 
 function NewEventContent() {
   const router = useRouter()
@@ -53,18 +43,7 @@ function NewEventContent() {
         return
       }
 
-      // Transform the data to match the expected interface
-      // The EventForm expects a 'tiers' array, but Supabase returns a single 'tier' object
-      const transformedSponsors: SponsorWithTier[] = (sponsorsData || []).map(sponsor => ({
-        ...sponsor,
-        tiers: sponsor.tier ? [{
-          id: sponsor.tier.id,
-          name: sponsor.tier.name,
-          amount: sponsor.tier.amount,
-          type: sponsor.tier.type
-        }] : [] // Wrap single tier in array with required fields
-      }))
-      setAvailableSponsors(transformedSponsors)
+      setAvailableSponsors(sponsorsData || [])
     } catch (error) {
       console.error('Error fetching sponsors:', error)
     } finally {
@@ -79,7 +58,7 @@ function NewEventContent() {
     }
   }, [mounted])
 
-  const handleCreateEvent = async (eventData: CreateEventRequest) => {
+  const handleCreateEvent = async (eventData: CreateEventRequest | UpdateEventRequest) => {
     // Create a unique identifier for this submission data
     const submissionId = JSON.stringify(eventData)
     

@@ -41,7 +41,7 @@ export default function AccessDeniedPage() {
             Access Restricted
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            You don't have permission to access this feature
+            You don&apos;t have permission to access this feature
           </p>
         </div>
 
@@ -104,7 +104,7 @@ export default function AccessDeniedPage() {
                 <li>You can browse and view all sponsors and events</li>
                 <li>Dashboard statistics are available</li>
                 <li>Contact information is visible</li>
-                <li>You'll receive email notification when approved</li>
+                <li>You&apos;ll receive email notification when approved</li>
               </ul>
             </div>
           )}

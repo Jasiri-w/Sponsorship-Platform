@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -16,13 +16,7 @@ function EditSponsorContent() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    if (sponsorId) {
-      fetchSponsor()
-    }
-  }, [sponsorId])
-
-  const fetchSponsor = async () => {
+  const fetchSponsor = useCallback(async () => {
     try {
       setLoading(true)
       const { data, error } = await supabase
@@ -39,7 +33,13 @@ function EditSponsorContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [sponsorId])
+
+  useEffect(() => {
+    if (sponsorId) {
+      fetchSponsor()
+    }
+  }, [sponsorId, fetchSponsor])
 
   if (loading) {
     return (

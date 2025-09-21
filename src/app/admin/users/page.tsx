@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { 
   getAllUsers, 
@@ -34,29 +34,7 @@ function UserManagementContent() {
   const [error, setError] = useState<string | null>(null)
   const { refreshUserProfile } = useAuth()
 
-  useEffect(() => {
-    fetchUsers()
-  }, [])
-
-  useEffect(() => {
-    filterUsers()
-  }, [users, searchTerm, statusFilter])
-
-  const fetchUsers = async () => {
-    try {
-      setLoading(true)
-      setError(null)
-      const allUsers = await getAllUsers()
-      setUsers(allUsers)
-    } catch (error) {
-      console.error('Error fetching users:', error)
-      setError('Failed to load users')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const filterUsers = () => {
+  const filterUsers = useCallback(() => {
     let filtered = [...users]
 
     // Filter by search term
@@ -81,7 +59,29 @@ function UserManagementContent() {
     }
 
     setFilteredUsers(filtered)
+  }, [users, searchTerm, statusFilter])
+
+  const fetchUsers = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const allUsers = await getAllUsers()
+      setUsers(allUsers)
+    } catch (error) {
+      console.error('Error fetching users:', error)
+      setError('Failed to load users')
+    } finally {
+      setLoading(false)
+    }
   }
+
+  useEffect(() => {
+    fetchUsers()
+  }, [])
+
+  useEffect(() => {
+    filterUsers()
+  }, [filterUsers])
 
   const handleUpdateUser = async (userId: string, isApproved: boolean, role: UserRole) => {
     try {

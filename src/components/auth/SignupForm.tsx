@@ -206,7 +206,7 @@ export default function SignupForm() {
 
           <div className="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-md text-sm">
             <p className="font-medium">Email Verification & Approval Required</p>
-            <p>After registration, you'll need to verify your email address. Then your account will need approval from a Sponsorship Chair before you can access editing features.</p>
+            <p>After registration, you&apos;ll need to verify your email address. Then your account will need approval from a Sponsorship Chair before you can access editing features.</p>
           </div>
 
           <div>

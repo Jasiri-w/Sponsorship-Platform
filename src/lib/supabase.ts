@@ -185,12 +185,10 @@ const createLoggedSupabaseClient = () => {
   
   // Override storage methods to add logging
   const originalStorage = baseClient.storage
-  baseClient.storage = {
-    ...originalStorage,
-    from: function(bucket: string) {
-      const storageApi = originalStorage.from(bucket)
-      return createLoggingProxy(storageApi, undefined, `storage.${bucket}`)
-    }
+  const originalFromMethod = originalStorage.from.bind(originalStorage)
+  originalStorage.from = function(bucket: string) {
+    const storageApi = originalFromMethod(bucket)
+    return createLoggingProxy(storageApi, undefined, `storage.${bucket}`)
   }
   
   return baseClient

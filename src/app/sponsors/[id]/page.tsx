@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { ArrowLeft, Edit, Mail, Phone, User, Building, CheckCircle, Clock, ExternalLink, FileText, AlertCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import type { SponsorWithTier, SponsorStatus } from '@/types/database'
@@ -21,13 +22,7 @@ function SponsorDetailContent() {
   const [updatingStatus, setUpdatingStatus] = useState(false)
   const { canEdit: canEditContent } = useAuth()
 
-  useEffect(() => {
-    if (sponsorId) {
-      fetchSponsor()
-    }
-  }, [sponsorId])
-
-  const fetchSponsor = async () => {
+  const fetchSponsor = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -67,7 +62,13 @@ function SponsorDetailContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [sponsorId])
+
+  useEffect(() => {
+    if (sponsorId) {
+      fetchSponsor()
+    }
+  }, [sponsorId, fetchSponsor])
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-US', {
@@ -221,7 +222,7 @@ function SponsorDetailContent() {
             <p className="subheading mt-1">Sponsor Details</p>
           </div>
         </div>
-        {canEditContent && (
+        {canEditContent() && (
           <Link href={`/sponsors/${sponsor.id}/edit`} className="btn-primary">
             <Edit className="h-4 w-4 mr-2 inline" />
             Edit Sponsor
@@ -243,9 +244,11 @@ function SponsorDetailContent() {
                 <div className="border-2 border-dashed border-gray-200 rounded-lg p-6">
                   {sponsor.logo_url ? (
                     <div className="text-center">
-                      <img
+                      <Image
                         src={sponsor.logo_url}
                         alt={`${sponsor.name} logo`}
+                        width={200}
+                        height={128}
                         className="max-w-full max-h-32 mx-auto rounded-lg object-contain"
                         onError={(e) => {
                           const target = e.target as HTMLImageElement
@@ -296,7 +299,7 @@ function SponsorDetailContent() {
                         {sponsor.status || 'Pending'}
                       </span>
                     </div>
-                    {canEditContent && (
+                    {canEditContent() && (
                       <button
                         onClick={toggleFulfilled}
                         disabled={updatingStatus}
@@ -472,7 +475,7 @@ function SponsorDetailContent() {
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
             
             <div className="space-y-3 w-full flex flex-col">
-              {canEditContent && (
+              {canEditContent() && (
                 <Link href={`/sponsors/${sponsor.id}/edit`} className="btn-primary w-full">
                   <Edit className="h-4 w-4 mr-2 inline" />
                   Edit Sponsor

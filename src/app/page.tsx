@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import Link from 'next/link'
 import { Plus, Calendar, DollarSign, Users, CheckCircle, Clock } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
@@ -17,11 +17,7 @@ function DashboardContent() {
   const [loading, setLoading] = useState(true)
   const { canEdit: canEditContent } = useAuth()
 
-  useEffect(() => {
-    fetchDashboardData()
-  }, [])
-
-  const fetchDashboardData = async () => {
+  const fetchDashboardData = useCallback(async () => {
     try {
       // Fetch sponsors with their tier information
       const { data: sponsorsData, error: sponsorsError } = await supabase
@@ -73,7 +69,11 @@ function DashboardContent() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [sponsors.length])
+
+  useEffect(() => {
+    fetchDashboardData()
+  }, [fetchDashboardData])
 
   const getTierBadgeClass = (tierName: string) => {
     const name = tierName.toLowerCase()
@@ -123,7 +123,7 @@ function DashboardContent() {
           />
           <h1 className="heading-lg text-gray-900 font-bold">Dashboard</h1>
         </div>
-        {canEditContent && (
+        {canEditContent() && (
           <div className="flex space-x-3">
             <Link href="/sponsors/add" className="btn-primary">
               <Plus className="h-4 w-4 mr-2 inline" />
@@ -196,7 +196,7 @@ function DashboardContent() {
               <div className="text-center py-6 text-gray-500">
                 <Users className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                 <p>No sponsors yet</p>
-                {canEditContent && (
+                {canEditContent() && (
                   <Link href="/sponsors/add" className="text-salmon-600 hover:text-salmon-700 text-sm font-medium">
                     Add your first sponsor
                   </Link>
@@ -212,9 +212,11 @@ function DashboardContent() {
                   <div key={sponsor.id} className="flex items-center space-x-4 p-3 rounded-lg hover:bg-gray-50">
                     <div className="flex-shrink-0">
                       {sponsor.logo_url ? (
-                        <img
+                        <Image
                           src={sponsor.logo_url}
                           alt={`${sponsor.name} logo`}
+                          width={40}
+                          height={40}
                           className="h-10 w-10 rounded-lg object-contain"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement
@@ -274,7 +276,7 @@ function DashboardContent() {
               <div className="text-center py-6 text-gray-500">
                 <Calendar className="h-12 w-12 mx-auto mb-4 text-gray-300" />
                 <p>No events scheduled</p>
-                {canEditContent && (
+                {canEditContent() && (
                   <Link href="/events/add" className="text-salmon-600 hover:text-salmon-700 text-sm font-medium">
                     Schedule your first event
                   </Link>
@@ -283,7 +285,7 @@ function DashboardContent() {
             ) : (
               events.map((event) => {
                 // Extract sponsors from event_sponsors relationship
-                const sponsors = event.event_sponsors?.map((es: any) => es.sponsor).filter(Boolean) || [];
+                const sponsors = (event as any).event_sponsors?.map((es: any) => es.sponsor).filter(Boolean) || [];
                 
                 return (
                   <Link
@@ -317,9 +319,11 @@ function DashboardContent() {
                                   title={sponsor.name}
                                 >
                                   {sponsor.logo_url ? (
-                                    <img
+                                    <Image
                                       src={sponsor.logo_url}
                                       alt={`${sponsor.name} logo`}
+                                      width={24}
+                                      height={24}
                                       className="w-full h-full object-contain"
                                       onError={(e) => {
                                         const target = e.target as HTMLImageElement;
