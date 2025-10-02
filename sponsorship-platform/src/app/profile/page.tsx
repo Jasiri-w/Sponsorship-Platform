@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
 import PageHeader from '@/components/ui/PageHeader'
 import ContentCard from '@/components/ui/ContentCard'
@@ -11,29 +11,36 @@ interface UserProfile {
   id: string
   full_name?: string
   email?: string
-  role: string
+  role?: string
   is_approved: boolean
   created_at: string
   updated_at?: string
 }
 
+// Loading skeleton component
+function ProfileLoadingSkeleton() {
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <div className="animate-pulse space-y-4">
+        <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+        <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+        <div className="space-y-2 mt-8">
+          <div className="h-6 bg-gray-200 rounded w-1/4"></div>
+          <div className="h-4 bg-gray-200 rounded w-full"></div>
+          <div className="h-4 bg-gray-200 rounded w-5/6"></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ProfilePage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
   const [showSuccess, setShowSuccess] = useState(false)
   const [user, setUser] = useState<User | null>(null)
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-
-  // Check for success message
-  useEffect(() => {
-    if (searchParams.get('updated') === 'true') {
-      setShowSuccess(true)
-      const timer = setTimeout(() => setShowSuccess(false), 5000)
-      return () => clearTimeout(timer)
-    }
-  }, [searchParams])
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -80,26 +87,16 @@ export default function ProfilePage() {
     fetchUserProfile()
   }, [])
 
+  // Display loading state
   if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto p-4">
-        <div className="animate-pulse space-y-4">
-          <div className="h-8 bg-gray-200 rounded w-1/3"></div>
-          <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-          <div className="space-y-2 mt-8">
-            <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-            <div className="h-4 bg-gray-200 rounded w-full"></div>
-            <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-          </div>
-        </div>
-      </div>
-    )
+    return <ProfileLoadingSkeleton />
   }
 
+  // Display error state
   if (error) {
     return (
       <div className="max-w-4xl mx-auto p-4">
-        <div className="bg-red-50 border-l-4 border-red-400 p-4">
+        <div className="rounded-md bg-red-50 p-4">
           <div className="flex">
             <div className="flex-shrink-0">
               <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -223,12 +220,6 @@ export default function ProfilePage() {
                 className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
                 Edit Profile
-              </button>
-              <button
-                type="button"
-                className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
-              >
-                Change Password
               </button>
             </div>
           </div>
