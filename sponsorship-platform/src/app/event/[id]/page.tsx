@@ -269,7 +269,7 @@ export default async function EventPage({ params }: EventPageProps) {
           <div className="text-center py-12">
             <Users className="mx-auto w-12 h-12 text-gray-400 mb-4" />
             <h3 className="text-lg font-semibold text-gray-800 mb-2">No sponsors yet</h3>
-            <p className="text-gray-600">This event doesn't have any sponsors associated with it yet.</p>
+            <p className="text-gray-600">This event doesn&apos;t have any sponsors associated with it yet.</p>
           </div>
         )}
       </ContentCard>

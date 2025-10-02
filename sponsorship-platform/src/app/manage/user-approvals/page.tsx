@@ -203,7 +203,7 @@ export default async function UserApprovalsPage() {
                   <li>Only approved users can access the platform features</li>
                   <li>Approving a user grants them access based on their registered role</li>
                   <li>Rejected users will need to register again</li>
-                  <li>Users with 'admin' or 'manager' roles should be carefully reviewed</li>
+                  <li>Users with &apos;admin&apos; or &apos;manager&apos; roles should be carefully reviewed</li>
                 </ul>
               </div>
             </div>

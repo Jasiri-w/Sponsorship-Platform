@@ -29,7 +29,7 @@ export default async function AddSponsorPage() {
         <div className="bg-red-50 border border-red-200 p-6 rounded-lg">
           <h1 className="text-xl font-semibold text-red-800 mb-2">Access Denied</h1>
           <p className="text-red-700">
-            You don't have permission to add sponsors. This page is only accessible to managers and administrators.
+            You don&apos;t have permission to add sponsors. This page is only accessible to managers and administrators.
           </p>
           {!profile?.is_approved && (
             <p className="text-red-700 mt-2">

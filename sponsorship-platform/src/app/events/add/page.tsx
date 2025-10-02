@@ -27,7 +27,7 @@ export default async function AddEventPage() {
           <div className="bg-red-900 border border-red-600 p-6 rounded-lg">
             <h1 className="text-xl font-semibold text-red-300 mb-2">Access Denied</h1>
             <p className="text-red-200">
-              You don't have permission to add events. This page is only accessible to managers and administrators.
+              You don&apost have permission to add events. This page is only accessible to managers and administrators.
             </p>
             {!profile?.is_approved && (
               <p className="text-red-200 mt-2">
@@ -114,7 +114,7 @@ export default async function AddEventPage() {
         <div className="bg-gray-900 p-6 rounded-lg shadow-2xl border border-gray-700 mt-6">
           <h2 className="text-lg font-semibold text-white mb-3">📋 Next Steps</h2>
           <div className="text-gray-300 space-y-2 text-sm">
-            <p>✅ After creating the event, you'll be able to:</p>
+            <p>✅ After creating the event, you&apos;ll be able to:</p>
             <ul className="list-disc list-inside ml-4 space-y-1">
               <li>Assign sponsors to this event</li>
               <li>Edit event details if needed</li>
