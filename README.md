@@ -2,6 +2,12 @@
 
 A modern web application built with Next.js, Tailwind CSS and Supabase for managing sponsorships, events, and user profiles. This platform facilitates connections between event organizers and potential sponsors.
 
+### Preview
+<img width="1918" height="547" alt="image" src="https://github.com/user-attachments/assets/7ae226b4-2a23-46dd-8425-d9a5e9516424" />
+
+
+---
+
 ## Features
 
 - **User Authentication**: Secure sign-up and login functionality
