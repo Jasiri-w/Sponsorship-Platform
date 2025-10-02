@@ -29,7 +29,7 @@ interface Tier {
   type: string
 }
 
-interface FormData {
+interface SponsorFormData {
   name: string
   tier_id: string
   contact_name: string
@@ -49,7 +49,7 @@ export default function EditSponsorPage({ params }: { params: { id: string } }) 
   const [error, setError] = useState<string | null>(null)
   const [sponsor, setSponsor] = useState<Sponsor | null>(null)
   const [tiers, setTiers] = useState<Tier[]>([])
-  const [formData, setFormData] = useState<FormData>({
+  const [formData, setFormData] = useState<SponsorFormData>({
     name: '',
     tier_id: '',
     contact_name: '',
@@ -64,7 +64,8 @@ export default function EditSponsorPage({ params }: { params: { id: string } }) 
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const target = e.target as HTMLInputElement
-    const { name, type, value } = target
+    const { name, type } = target
+    const value = target.value
     const checked = 'checked' in target ? target.checked : undefined
     
     setFormData(prev => ({
@@ -152,18 +153,27 @@ export default function EditSponsorPage({ params }: { params: { id: string } }) 
     e.preventDefault()
     setLoading(true)
     setError(null)
-    
+
     try {
-      const formData = new FormData(e.currentTarget)
-      await updateSponsor(formData as any) // updateSponsor handles redirects on its own
+      const formDataToSend = new FormData()
       
-      // If we get here, the update was successful and we'll be redirected by updateSponsor
-      // This is just a fallback in case the redirect doesn't happen
+      // Append all form fields from the formData state
+      Object.entries(formData).forEach(([key, value]) => {
+        if (value !== null && value !== undefined) {
+          formDataToSend.append(key, String(value))
+        }
+      })
+      
+      // Add the sponsor ID to the form data
+      formDataToSend.append('id', id)
+
+      // Call the server action to update the sponsor
+      await updateSponsor(formDataToSend)
+      
+      // Redirect to sponsors list on success
       router.push('/sponsors')
-      router.refresh()
     } catch (err) {
-      console.error('Error updating sponsor:', err)
-      setError('An error occurred while updating the sponsor')
+      setError(err instanceof Error ? err.message : 'Failed to update sponsor')
     } finally {
       setLoading(false)
     }
@@ -443,3 +453,4 @@ export default function EditSponsorPage({ params }: { params: { id: string } }) 
       </div>
     </div>
   )
+}

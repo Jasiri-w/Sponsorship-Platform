@@ -36,8 +36,11 @@ export default function UserManagementPage() {
         }
     }
 
+    // Define the type for the action function
+    type ServerAction = (formData: FormData) => Promise<void>;
+
     // Handle server actions with loading states
-    const handleAction = async (action: Function, userId: string, actionName: string) => {
+    const handleAction = async (action: ServerAction, userId: string, actionName: string) => {
         try {
         setLoading(prev => ({...prev, [actionName + userId]: true}))
         setError(null)
