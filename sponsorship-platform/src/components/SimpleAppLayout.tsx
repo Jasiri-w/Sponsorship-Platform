@@ -17,15 +17,7 @@ export default function SimpleAppLayout({ children }: SimpleAppLayoutProps) {
   const [userData, setUserData] = useState<{ full_name?: string; role?: string }>({})
   const pathname = usePathname()
 
-  // Don't apply layout to auth pages
-  const authPages = ['/login', '/signup', '/auth']
-  const isAuthPage = authPages.some(page => pathname.startsWith(page))
-  
-  if (isAuthPage) {
-    return <>{children}</>
-  }
-
-  // Fetch user data
+  // Fetch user data - Moved before any conditional returns
   useEffect(() => {
     async function fetchUserData() {
       const supabase = createClient()
@@ -49,6 +41,14 @@ export default function SimpleAppLayout({ children }: SimpleAppLayoutProps) {
     
     fetchUserData()
   }, [])
+
+  // Don't apply layout to auth pages
+  const authPages = ['/login', '/signup', '/auth']
+  const isAuthPage = authPages.some(page => pathname.startsWith(page))
+  
+  if (isAuthPage) {
+    return <>{children}</>
+  }
 
   const mobileNavItems = [
     { label: 'Dashboard', href: '/dashboard' },
