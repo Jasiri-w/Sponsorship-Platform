@@ -5,8 +5,8 @@ import { assignSponsorToEvent, removeSponsorFromEvent } from './actions'
 type EventSponsorRelationship = {
   event_id: string
   sponsor_id: string
-  events?: { title: string } | null
-  sponsors?: { name: string } | null
+  events: { title: string }[] | null
+  sponsors: { name: string }[] | null
 }
 
 export default async function ManageEventSponsorsPage() {
@@ -154,10 +154,10 @@ export default async function ManageEventSponsorsPage() {
                   >
                     <div className="flex-1">
                       <p className="text-sm font-medium text-gray-900">
-                        {relationship.events?.title}
+                        {relationship.events?.[0]?.title || 'Unknown Event'}
                       </p>
                       <p className="text-xs text-gray-600">
-                        sponsored by {relationship.sponsors?.name}
+                        sponsored by {relationship.sponsors?.[0]?.name || 'Unknown Sponsor'}
                       </p>
                     </div>
                     
