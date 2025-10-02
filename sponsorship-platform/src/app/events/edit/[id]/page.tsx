@@ -59,7 +59,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
           <div className="bg-red-900 border border-red-600 p-6 rounded-lg">
             <h1 className="text-xl font-semibold text-red-300 mb-2">Event Not Found</h1>
             <p className="text-red-200">
-              The event you're trying to edit could not be found or you don't have permission to access it.
+              The event you&apos;re trying to edit could not be found or you don&apos;t have permission to access it.
             </p>
             <p className="text-red-200 mt-2">Error: {eventError?.message}</p>
           </div>
