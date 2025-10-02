@@ -2,12 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/utils/supabase/client'
+import { useRouter, usePathname } from 'next/navigation'
 import Sidebar from './Sidebar'
 import MobileTopNav from './MobileTopNav'
 
 interface UserProfile {
+  id: string
   role: string
   is_approved: boolean
+  full_name?: string
+  email?: string
+  created_at: string
+  updated_at?: string
 }
 
 interface AppLayoutProps {
@@ -19,39 +25,45 @@ export default function AppLayout({ children }: AppLayoutProps) {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
+  const router = useRouter()
+  const pathname = usePathname()
+  const isAuthPage = ['/login', '/signup', '/auth'].some(path => pathname?.startsWith(path))
 
   useEffect(() => {
     const supabase = createClient()
-    let mounted = true
+    let mounted: boolean = true
 
     const getUser = async () => {
       try {
         console.log('AppLayout: Starting getUser')
         
         // Get current user
-        const { data: userData, error: userError } = await supabase.auth.getUser()
+        const { data: { user: currentUser }, error: userError } = await supabase.auth.getUser()
         
-        console.log('AppLayout: Got user data', { userData: !!userData?.user, error: userError })
+        console.log('AppLayout: Got user data', { user: !!currentUser, error: userError })
         
         if (!mounted) return
         
-        if (userError || !userData?.user) {
+        if (userError || !currentUser) {
           setIsAuthenticated(false)
           setUser(null)
           setProfile(null)
           setIsLoading(false)
+          if (!isAuthPage) {
+            router.push('/login')
+          }
           return
         }
 
-        setUser(userData.user)
+        setUser({ id: currentUser.id, email: currentUser.email })
         setIsAuthenticated(true)
 
         // Get user profile
         try {
           const { data: profileData, error: profileError } = await supabase
             .from('user_profiles')
-            .select('role, is_approved')
-            .eq('user_id', userData.user.id)
+            .select('id, role, is_approved, full_name, email, created_at, updated_at')
+            .eq('user_id', currentUser.id)
             .single()
 
           console.log('AppLayout: Got profile data', { profileData, profileError })
@@ -63,12 +75,26 @@ export default function AppLayout({ children }: AppLayoutProps) {
           } else {
             console.error('Error fetching user profile:', profileError)
             // Set default profile for cases where profile doesn't exist yet
-            setProfile({ role: 'user', is_approved: false })
+            setProfile({ 
+              id: currentUser.id,
+              role: 'user', 
+              is_approved: false,
+              full_name: currentUser.email?.split('@')[0] || 'User',
+              email: currentUser.email || '',
+              created_at: new Date().toISOString()
+            })
           }
         } catch (profileErr) {
           console.error('Profile fetch error:', profileErr)
           if (mounted) {
-            setProfile({ role: 'user', is_approved: false })
+            setProfile({ 
+              id: currentUser.id,
+              role: 'user', 
+              is_approved: false,
+              full_name: currentUser.email?.split('@')[0] || 'User',
+              email: currentUser.email || '',
+              created_at: new Date().toISOString()
+            })
           }
         }
       } catch (error) {
@@ -77,6 +103,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
           setIsAuthenticated(false)
           setUser(null)
           setProfile(null)
+          if (!isAuthPage) {
+            router.push('/login')
+          }
         }
       } finally {
         if (mounted) {
@@ -100,7 +129,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (event) => {
         console.log('AppLayout: Auth state changed', event)
         if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
           if (mounted) {
@@ -113,6 +142,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
             setUser(null)
             setProfile(null)
             setIsLoading(false)
+            if (!isAuthPage) {
+              router.push('/login')
+            }
           }
         }
       }
@@ -121,27 +153,9 @@ export default function AppLayout({ children }: AppLayoutProps) {
     return () => {
       mounted = false
       clearTimeout(timeout)
-      subscription.unsubscribe()
+      subscription?.unsubscribe()
     }
-  }, [])
-
-  // Don't render sidebar on auth pages
-  const authPages = ['/login', '/signup', '/auth']
-  const isAuthPage = authPages.some(page => 
-    typeof window !== 'undefined' && window.location.pathname.startsWith(page)
-  )
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading...</p>
-        </div>
-      </div>
-    )
-  }
-
+  }, [router, pathname, isAuthPage])
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Desktop Sidebar - Hidden on mobile */}
@@ -151,16 +165,20 @@ export default function AppLayout({ children }: AppLayoutProps) {
             userRole={profile?.role}
             isApproved={profile?.is_approved}
             isAuthenticated={isAuthenticated}
+            fullName={profile?.full_name}
+            email={profile?.email}
           />
         </div>
       )}
       
       {/* Mobile Top Navigation */}
-      <MobileTopNav 
-        userRole={profile?.role}
-        isApproved={profile?.is_approved}
-        isAuthenticated={isAuthenticated}
-      />
+      {!isAuthPage && isAuthenticated && (
+        <MobileTopNav 
+          userRole={profile?.role || 'user'}
+          isApproved={!!profile?.is_approved}
+          isAuthenticated={isAuthenticated}
+        />
+      )}
       
       {/* Main Content */}
       <main className={`min-h-screen ${

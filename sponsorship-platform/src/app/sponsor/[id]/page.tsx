@@ -48,7 +48,8 @@ interface SponsorPageProps {
 }
 
 export default async function SponsorPage({ params }: SponsorPageProps) {
-  const { id } = params
+  // Ensure params is properly awaited
+  const { id } = await params
   const supabase = await createClient()
 
   // Check if user is authenticated
@@ -259,14 +260,20 @@ export default async function SponsorPage({ params }: SponsorPageProps) {
               )}
               <h3 className="font-semibold text-gray-800">Sponsorship Agreement</h3>
             </div>
-            <p className={`text-sm ${
-              sponsor.sponsorship_agreement_url ? 'text-green-700' : 'text-red-700'
-            }`}>
-              {sponsor.sponsorship_agreement_url 
-                ? 'Document uploaded and available'
-                : 'Document missing or not uploaded'
-              }
-            </p>
+            <div className="text-sm">
+              {sponsor.sponsorship_agreement_url ? (
+                <a 
+                  href={sponsor.sponsorship_agreement_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 hover:underline break-all"
+                >
+                  View Sponsorship Agreement
+                </a>
+              ) : (
+                <p className="text-red-700">Document missing or not uploaded</p>
+              )}
+            </div>
           </div>
 
           <div className={`p-4 rounded-lg border-2 ${
@@ -282,12 +289,20 @@ export default async function SponsorPage({ params }: SponsorPageProps) {
               )}
               <h3 className="font-semibold text-gray-800">Receipt</h3>
             </div>
-            <p className={`${sponsor.receipt_url ? 'text-green-700' : 'text-red-700'}`}>
-              {sponsor.receipt_url 
-                ? 'Receipt uploaded and available'
-                : 'Receipt missing or not uploaded'
-              }
-            </p>
+            <div className="text-sm">
+              {sponsor.receipt_url ? (
+                <a 
+                  href={sponsor.receipt_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="text-blue-600 hover:text-blue-800 hover:underline break-all"
+                >
+                  View Receipt
+                </a>
+              ) : (
+                <p className="text-red-700">Receipt missing or not uploaded</p>
+              )}
+            </div>
           </div>
         </div>
       </ContentCard>

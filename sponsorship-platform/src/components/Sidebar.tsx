@@ -10,6 +10,8 @@ interface SidebarProps {
   userRole?: string
   isApproved?: boolean
   isAuthenticated?: boolean
+  fullName?: string
+  email?: string
 }
 
 interface NavItem {
@@ -25,7 +27,7 @@ interface NavSection {
   items: NavItem[]
 }
 
-export default function Sidebar({ userRole, isApproved, isAuthenticated }: SidebarProps) {
+export default function Sidebar({ userRole, isApproved, isAuthenticated, fullName, email }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
   const [isLoggingOut, setIsLoggingOut] = useState(false)
   const pathname = usePathname()
@@ -324,13 +326,18 @@ export default function Sidebar({ userRole, isApproved, isAuthenticated }: Sideb
                   userRole === 'manager' ? 'bg-blue-600' :
                   'bg-gray-600'
                 }`}>
-                  {userRole?.charAt(0).toUpperCase()}
+                  {userRole ? userRole.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-700 capitalize">
-                    {userRole || 'User'}
+                  <p className="text-sm font-medium text-gray-700">
+                    {fullName || (email ? email.split('@')[0] : 'User')}
                   </p>
-                  <p className="text-xs text-gray-500">
+                  {email && (
+                    <p className="text-xs text-gray-600 truncate max-w-[180px]">
+                      {email}
+                    </p>
+                  )}
+                  <p className="text-xs text-gray-500 mt-0.5">
                     {isApproved ? 'Approved' : 'Pending'}
                   </p>
                 </div>

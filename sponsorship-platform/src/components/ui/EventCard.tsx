@@ -70,41 +70,36 @@ export default function EventCard({
           {/* Overlapping Sponsor Logos */}
           {displaySponsors.length > 0 ? (
             <div className="flex items-center">
-              <div className="flex -space-x-2">
                 {displaySponsors.map((eventSponsor, index) => {
                   const sponsor = eventSponsor.sponsors;
                   if (!sponsor) return null;
                   
                   return (
-                    <div
-                      key={eventSponsor.id}
-                      className="relative w-8 h-8 rounded-full border-2 border-white overflow-hidden"
-                      style={{ zIndex: displaySponsors.length - index }}
-                    >
-                      {sponsor.logo_url ? (
-                        <img 
-                          src={sponsor.logo_url} 
-                          alt={sponsor.name}
-                          className="w-full h-full object-cover"
-                          title={sponsor.name}
-                        />
-                      ) : (
-                        <div 
-                          className="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center"
-                          title={sponsor.name}
-                        >
-                          <span className="text-white font-medium text-xs">
-                            {sponsor.name.charAt(0).toUpperCase()}
-                          </span>
-                        </div>
-                      )}
-                    </div>
+                      <a 
+                        key={eventSponsor.id}
+                        href={`/sponsor/${sponsor.id}`}
+                        className="relative block w-8 h-8 rounded-full border-2 border-white overflow-hidden hover:ring-2 hover:ring-blue-500 hover:ring-offset-2 transition-all"
+                        style={{ zIndex: displaySponsors.length - index }}
+                        title={`View ${sponsor.name}`}
+                      >
+                        {sponsor.logo_url ? (
+                          <img 
+                            src={sponsor.logo_url} 
+                            alt={sponsor.name}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gradient-to-br from-blue-600 to-purple-600 flex items-center justify-center">
+                            <span className="text-white font-medium text-xs">
+                              {sponsor.name.charAt(0).toUpperCase()}
+                            </span>
+                          </div>
+                        )}
+                      </a>
                   );
                 })}
-              </div>
-              
               {/* Sponsor Count */}
-              <div className="ml-3 text-sm text-gray-600 flex items-center gap-1">
+              <div className="flex items-center gap-1 text-sm text-gray-600 ml-2">
                 <Users className="w-4 h-4" />
                 <span className="font-medium">{sponsorCount}</span>
                 <span>Sponsor{sponsorCount !== 1 ? 's' : ''}</span>

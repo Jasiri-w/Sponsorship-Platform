@@ -108,14 +108,14 @@ export default function ModernSidebar({ className = '' }: SidebarProps) {
     },
   ]
 
-  // Admin-only navigation items
-  const adminNavItems: NavItem[] = userRole === 'admin' ? [
+  // Admin/Manager navigation items
+  const adminNavItems: NavItem[] = (userRole === 'admin' || userRole === 'manager') ? [
     {
       label: 'User Management',
-      href: '/manage/user-roles',
+      href: '/manage/users',
       icon: UserCog,
     },
-  ] : []
+  ] : [];
 
   const isActive = (href: string) => {
     if (href === '/dashboard') {
