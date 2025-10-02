@@ -30,28 +30,33 @@ interface NavItem {
 
 export default function ModernSidebar({ className = '' }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false)
-  const [userRole, setUserRole] = useState<string>('')
+  const [userData, setUserData] = useState<{ full_name?: string; role?: string }>({})
   const pathname = usePathname()
 
-  // Fetch user role
+  // Fetch user data
   useEffect(() => {
-    async function fetchUserRole() {
+    async function fetchUserData() {
       const { createClient } = await import('@/utils/supabase/client')
       const supabase = createClient()
       
-      const { data: userData } = await supabase.auth.getUser()
-      if (userData?.user) {
+      const { data: { user } } = await supabase.auth.getUser()
+      if (user) {
         const { data: profile } = await supabase
           .from('user_profiles')
-          .select('role')
-          .eq('user_id', userData.user.id)
+          .select('full_name, role')
+          .eq('user_id', user.id)
           .single()
-        
-        setUserRole(profile?.role || 'user')
+          
+        if (profile) {
+          setUserData({
+            full_name: profile.full_name || 'User',
+            role: profile.role
+          })
+        }
       }
     }
     
-    fetchUserRole()
+    fetchUserData()
   }, [])
 
   // Update main content margin when sidebar state changes
@@ -109,7 +114,7 @@ export default function ModernSidebar({ className = '' }: SidebarProps) {
   ]
 
   // Admin/Manager navigation items
-  const adminNavItems: NavItem[] = (userRole === 'admin' || userRole === 'manager') ? [
+  const adminNavItems: NavItem[] = (userData.role === 'admin' || userData.role === 'manager') ? [
     {
       label: 'User Management',
       href: '/manage/users',
@@ -334,11 +339,17 @@ export default function ModernSidebar({ className = '' }: SidebarProps) {
             <div className="mt-4 pt-4 border-t border-gray-100">
               <div className="flex items-center space-x-3 px-3 py-2 mb-3">
                 <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
-                  <span className="text-white font-medium text-sm">U</span>
+                  <span className="text-white font-medium text-sm">
+                    {userData.full_name?.charAt(0) || 'U'}
+                  </span>
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">User</p>
-                  <p className="text-xs text-gray-500 truncate">Logged in</p>
+                  <p className="text-sm font-medium text-gray-900 truncate">
+                    {userData.full_name || 'User'}
+                  </p>
+                  <p className="text-xs text-gray-500 truncate">
+                    {userData.role ? userData.role.charAt(0).toUpperCase() + userData.role.slice(1) : 'User'}
+                  </p>
                 </div>
               </div>
               

@@ -1,10 +1,12 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { usePathname } from 'next/navigation'
 import ModernSidebar from './ModernSidebar'
 import { Menu, X } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
+import { createClient } from '@/utils/supabase/client'
 
 interface SimpleAppLayoutProps {
   children: React.ReactNode
@@ -12,23 +14,50 @@ interface SimpleAppLayoutProps {
 
 export default function SimpleAppLayout({ children }: SimpleAppLayoutProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [userData, setUserData] = useState<{ full_name?: string; role?: string }>({})
   const pathname = usePathname()
 
   // Don't apply layout to auth pages
   const authPages = ['/login', '/signup', '/auth']
   const isAuthPage = authPages.some(page => pathname.startsWith(page))
-
+  
   if (isAuthPage) {
     return <>{children}</>
   }
+
+  // Fetch user data
+  useEffect(() => {
+    async function fetchUserData() {
+      const supabase = createClient()
+      const { data: { user } } = await supabase.auth.getUser()
+      
+      if (user) {
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('full_name, role')
+          .eq('user_id', user.id)
+          .single()
+          
+        if (profile) {
+          setUserData({
+            full_name: profile.full_name || 'User',
+            role: profile.role
+          })
+        }
+      }
+    }
+    
+    fetchUserData()
+  }, [])
 
   const mobileNavItems = [
     { label: 'Dashboard', href: '/dashboard' },
     { label: 'Sponsors', href: '/sponsors' },
     { label: 'Events', href: '/events' },
     { label: 'Events & Sponsors', href: '/events-sponsors' },
-    { label: 'Font Test', href: '/font-test' },
-    { label: 'Layout Test', href: '/layout-test' },
+    ...(userData.role === 'admin' || userData.role === 'manager' 
+      ? [{ label: 'User Management', href: '/manage/users' }] 
+      : [])
   ]
 
   const isActive = (href: string) => {
@@ -69,32 +98,47 @@ export default function SimpleAppLayout({ children }: SimpleAppLayoutProps) {
             </div>
             
             {/* Mobile Menu */}
-            <div className={`
-              overflow-hidden transition-all duration-300 ease-in-out
-              ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}
-            `}>
+            {isMobileMenuOpen && (
               <div className="mt-4 pb-4 border-t border-gray-100">
+                {/* User info */}
+                <div className="px-4 py-3 border-b border-gray-100">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-green-400 to-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-white font-medium text-sm">
+                        {userData.full_name?.charAt(0) || 'U'}
+                      </span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {userData.full_name || 'User'}
+                      </p>
+                      <p className="text-xs text-gray-500 truncate">
+                        {userData.role ? userData.role.charAt(0).toUpperCase() + userData.role.slice(1) : 'User'}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                
                 <nav className="space-y-2 pt-4">
                   {mobileNavItems.map((item) => (
-                    <a
+                    <Link
                       key={item.href}
                       href={item.href}
-                      onClick={() => setIsMobileMenuOpen(false)}
                       className={`
-                        block px-4 py-2 rounded-lg font-medium text-sm transition-colors focus-ring
-                        ${
-                          isActive(item.href)
-                            ? 'bg-blue-50 text-blue-700 shadow-elegant'
-                            : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:shadow-elegant'
+                        block px-4 py-2 rounded-lg font-medium text-sm transition-colors
+                        ${isActive(item.href)
+                          ? 'bg-blue-50 text-blue-700 shadow-elegant'
+                          : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 hover:shadow-elegant'
                         }
                       `}
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   ))}
                 </nav>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
