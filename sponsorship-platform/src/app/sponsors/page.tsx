@@ -10,17 +10,53 @@ import FilterDropdown from '@/components/ui/FilterDropdown'
 import { createClient } from '@/utils/supabase/client'
 import type { Sponsor } from '@/types/database.types'
 
-interface SponsorsWithTiers extends Sponsor {
+// Internal type for the sponsor data from the database
+interface SponsorWithTiers extends Omit<Sponsor, 'tiers'> {
   tiers?: {
     id: string
     name: string
     amount: number | null
     type: 'Standard' | 'Custom'
+    created_at: string
+  }
+}
+
+// Type that matches what SponsorCard expects
+// Type that matches what SponsorCard expects
+type SponsorForCard = {
+  id: string
+  name: string
+  logo_url?: string
+  contact_name?: string
+  contact_email?: string
+  contact_phone?: string
+  address?: string
+  sponsorship_agreement_url?: string
+  receipt_url?: string
+  fulfilled: boolean
+  created_at: string
+  updated_at?: string
+  tiers?: {
+    amount: number
   }
 }
 
 export default function SponsorsPage() {
-  const [sponsors, setSponsors] = useState<SponsorsWithTiers[]>([])
+  const [sponsors, setSponsors] = useState<SponsorWithTiers[]>([])
+  
+  // Convert sponsor data to the format expected by SponsorCard
+  const sponsorsForCard: SponsorForCard[] = sponsors.map(sponsor => ({
+    ...sponsor,
+    logo_url: sponsor.logo_url || undefined,
+    contact_name: sponsor.contact_name || undefined,
+    contact_email: sponsor.contact_email || undefined,
+    contact_phone: sponsor.contact_phone || undefined,
+    address: sponsor.address || undefined,
+    sponsorship_agreement_url: sponsor.sponsorship_agreement_url || undefined,
+    receipt_url: sponsor.receipt_url || undefined,
+    updated_at: sponsor.updated_at || undefined,
+    tiers: sponsor.tiers ? { amount: sponsor.tiers.amount || 0 } : undefined
+  }))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState('')
@@ -80,12 +116,13 @@ export default function SponsorsPage() {
   }, [])
 
   // Filter sponsors based on search and filters
-  const filteredSponsors = sponsors.filter(sponsor => {
+  const filteredSponsors = sponsorsForCard.filter(sponsor => {
     const matchesSearch = sponsor.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          sponsor.contact_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          sponsor.contact_email?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesTier = !tierFilter || sponsor.tiers?.name === tierFilter
+    const originalSponsor = sponsors.find(s => s.id === sponsor.id)
+    const matchesTier = !tierFilter || originalSponsor?.tiers?.name === tierFilter
     const matchesStatus = !statusFilter || 
                          (statusFilter === 'fulfilled' && sponsor.fulfilled) ||
                          (statusFilter === 'pending' && !sponsor.fulfilled)
