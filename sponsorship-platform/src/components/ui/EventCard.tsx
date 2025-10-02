@@ -5,7 +5,7 @@ interface EventCardProps {
     id: string;
     title: string;
     date: string;
-    details?: string;
+    details?: string | null;
     created_at: string;
     event_sponsors?: Array<{
       id: string;

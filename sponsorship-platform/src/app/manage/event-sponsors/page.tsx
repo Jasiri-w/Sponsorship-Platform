@@ -2,6 +2,13 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/utils/supabase/server'
 import { assignSponsorToEvent, removeSponsorFromEvent } from './actions'
 
+type EventSponsorRelationship = {
+  event_id: string
+  sponsor_id: string
+  events?: { title: string } | null
+  sponsors?: { name: string } | null
+}
+
 export default async function ManageEventSponsorsPage() {
   const supabase = await createClient()
 
@@ -45,14 +52,14 @@ export default async function ManageEventSponsorsPage() {
     redirect('/error')
   }
 
-  // Fetch all existing event-sponsor relationships
+  // Fetch all existing event-sponsor relationships with joins
   const { data: eventSponsors, error: eventSponsorsError } = await supabase
     .from('event_sponsors')
     .select(`
       event_id,
       sponsor_id,
-      events:event_id(title),
-      sponsors:sponsor_id(name)
+      events!inner(title),
+      sponsors!inner(name)
     `)
     .order('event_id', { ascending: true })
 
@@ -60,6 +67,9 @@ export default async function ManageEventSponsorsPage() {
     console.error('Error fetching event sponsors:', eventSponsorsError)
     redirect('/error')
   }
+
+  // Cast to proper type
+  const typedEventSponsors = eventSponsors as EventSponsorRelationship[]
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -135,9 +145,9 @@ export default async function ManageEventSponsorsPage() {
               Current Event-Sponsor Relationships
             </h2>
             
-            {eventSponsors && eventSponsors.length > 0 ? (
+            {typedEventSponsors && typedEventSponsors.length > 0 ? (
               <div className="space-y-3 max-h-96 overflow-y-auto">
-                {eventSponsors.map((relationship) => (
+                {typedEventSponsors.map((relationship) => (
                   <div
                     key={`${relationship.event_id}-${relationship.sponsor_id}`}
                     className="flex justify-between items-center p-3 bg-gray-50 rounded-md"
@@ -185,7 +195,7 @@ export default async function ManageEventSponsorsPage() {
               <p className="text-sm text-gray-600">Total Sponsors</p>
             </div>
             <div>
-              <p className="text-2xl font-bold text-purple-600">{eventSponsors?.length || 0}</p>
+              <p className="text-2xl font-bold text-purple-600">{typedEventSponsors?.length || 0}</p>
               <p className="text-sm text-gray-600">Active Relationships</p>
             </div>
           </div>

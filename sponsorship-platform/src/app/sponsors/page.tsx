@@ -69,8 +69,8 @@ export default function SponsorsPage() {
         }
 
         setSponsors(sponsorsData || [])
-      } catch (err: any) {
-        setError(err.message)
+      } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : 'An unknown error occurred')
       } finally {
         setLoading(false)
       }

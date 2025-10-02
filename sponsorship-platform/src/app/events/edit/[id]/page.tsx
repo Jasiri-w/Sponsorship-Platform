@@ -32,7 +32,7 @@ export default async function EditEventPage({ params }: EditEventPageProps) {
           <div className="bg-red-900 border border-red-600 p-6 rounded-lg">
             <h1 className="text-xl font-semibold text-red-300 mb-2">Access Denied</h1>
             <p className="text-red-200">
-              You don't have permission to edit events. This page is only accessible to managers and administrators.
+              You don&apos;t have permission to edit events. This page is only accessible to managers and administrators.
             </p>
             {!profile?.is_approved && (
               <p className="text-red-200 mt-2">

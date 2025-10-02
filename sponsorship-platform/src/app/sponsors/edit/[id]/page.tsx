@@ -18,7 +18,7 @@ export default async function EditSponsorPage({ params }: EditSponsorPageProps) 
   }
 
   // Get user profile to check role and approval status
-  const { data: profile, error: profileError } = await supabase
+  const { data: profile } = await supabase
     .from('user_profiles')
     .select('role, is_approved')
     .eq('user_id', userData.user.id)
@@ -32,7 +32,7 @@ export default async function EditSponsorPage({ params }: EditSponsorPageProps) 
           <div className="bg-red-900 border border-red-600 p-6 rounded-lg">
             <h1 className="text-xl font-semibold text-red-300 mb-2">Access Denied</h1>
             <p className="text-red-200">
-              You don't have permission to edit sponsors. This page is only accessible to managers and administrators.
+              You don&apos;t have permission to edit sponsors. This page is only accessible to managers and administrators.
             </p>
             {!profile?.is_approved && (
               <p className="text-red-200 mt-2">
@@ -59,7 +59,7 @@ export default async function EditSponsorPage({ params }: EditSponsorPageProps) 
           <div className="bg-red-900 border border-red-600 p-6 rounded-lg">
             <h1 className="text-xl font-semibold text-red-300 mb-2">Sponsor Not Found</h1>
             <p className="text-red-200">
-              The sponsor you're trying to edit could not be found or you don't have permission to access it.
+              The sponsor you&apos;re trying to edit could not be found or you don&apos;t have permission to access it.
             </p>
             <p className="text-red-200 mt-2">Error: {sponsorError?.message}</p>
           </div>
