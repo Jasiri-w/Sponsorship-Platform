@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import React, { ReactNode, useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { createClient } from '@/utils/supabase/client'
@@ -15,7 +15,7 @@ interface SidebarProps {
 interface NavItem {
   name: string
   href: string
-  icon: JSX.Element
+  icon: ReactNode
   roles?: string[] // If undefined, available to all authenticated users
   requiresApproval?: boolean
 }
