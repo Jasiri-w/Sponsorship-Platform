@@ -5,12 +5,50 @@ import PageHeader from '@/components/ui/PageHeader'
 import ContentCard from '@/components/ui/ContentCard'
 import StatsCard from '@/components/ui/StatsCard'
 
+interface Event {
+  id: string
+  title: string
+  date: string
+  details?: string | null
+}
+
+interface EventSponsor {
+  id: string
+  created_at: string
+  events: Event | null
+}
+
+interface SponsorTier {
+  id: string
+  name: string
+  amount: string
+  type: string
+  created_at: string
+}
+
+interface Sponsor {
+  id: string
+  name: string
+  contact_name?: string | null
+  contact_email?: string | null
+  contact_phone?: string | null
+  address?: string | null
+  logo_url?: string | null
+  sponsorship_agreement_url?: string | null
+  receipt_url?: string | null
+  fulfilled: boolean
+  created_at: string
+  updated_at?: string | null
+  tiers?: SponsorTier | null
+  event_sponsors?: EventSponsor[]
+}
+
 interface SponsorPageProps {
-  params: Promise<{ id: string }>
+  params: { id: string }
 }
 
 export default async function SponsorPage({ params }: SponsorPageProps) {
-  const { id } = await params
+  const { id } = params
   const supabase = await createClient()
 
   // Check if user is authenticated
@@ -244,9 +282,7 @@ export default async function SponsorPage({ params }: SponsorPageProps) {
               )}
               <h3 className="font-semibold text-gray-800">Receipt</h3>
             </div>
-            <p className={`text-sm ${
-              sponsor.receipt_url ? 'text-green-700' : 'text-red-700'
-            }`}>
+            <p className={`${sponsor.receipt_url ? 'text-green-700' : 'text-red-700'}`}>
               {sponsor.receipt_url 
                 ? 'Receipt uploaded and available'
                 : 'Receipt missing or not uploaded'
@@ -260,14 +296,16 @@ export default async function SponsorPage({ params }: SponsorPageProps) {
       <ContentCard title="Events Sponsored" className="mb-6">
         {sponsor.event_sponsors && sponsor.event_sponsors.length > 0 ? (
           <div className="space-y-4">
-            {sponsor.event_sponsors.map((eventSponsor) => {
-              const event = eventSponsor.events
-              if (!event) return null
+            {(sponsor.event_sponsors || []).map((eventSponsor: EventSponsor) => {
+              const event = eventSponsor.events;
+              if (!event) return null;
 
               return (
                 <div key={eventSponsor.id} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                   <div className="flex justify-between items-start mb-2">
-                    <h4 className="text-lg font-semibold text-gray-800">{event.title}</h4>
+                    <div>
+                      <h3 className="text-lg font-semibold text-gray-900">{event.title}</h3>
+                    </div>
                     <div className="text-right">
                       <div className="flex items-center text-sm text-gray-600 mb-1">
                         <Calendar className="w-4 h-4 mr-1" />
@@ -288,7 +326,7 @@ export default async function SponsorPage({ params }: SponsorPageProps) {
                     Sponsorship Added: {new Date(eventSponsor.created_at).toLocaleDateString()}
                   </div>
                 </div>
-              )
+              );
             })}
           </div>
         ) : (
