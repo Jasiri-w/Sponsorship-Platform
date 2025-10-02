@@ -26,18 +26,22 @@ interface SponsorWithTiers extends Omit<Sponsor, 'tiers'> {
 type SponsorForCard = {
   id: string
   name: string
-  logo_url?: string
-  contact_name?: string
-  contact_email?: string
-  contact_phone?: string
-  address?: string
-  sponsorship_agreement_url?: string
-  receipt_url?: string
+  logo_url?: string | null
+  contact_name?: string | null
+  contact_email?: string | null
+  contact_phone?: string | null
+  address?: string | null
+  sponsorship_agreement_url?: string | null
+  receipt_url?: string | null
   fulfilled: boolean
   created_at: string
-  updated_at?: string
+  updated_at?: string | null
   tiers?: {
+    id?: string
+    name: string
     amount: number
+    type: 'Standard' | 'Custom'
+    created_at?: string
   }
 }
 
@@ -47,15 +51,13 @@ export default function SponsorsPage() {
   // Convert sponsor data to the format expected by SponsorCard
   const sponsorsForCard: SponsorForCard[] = sponsors.map(sponsor => ({
     ...sponsor,
-    logo_url: sponsor.logo_url || undefined,
-    contact_name: sponsor.contact_name || undefined,
-    contact_email: sponsor.contact_email || undefined,
-    contact_phone: sponsor.contact_phone || undefined,
-    address: sponsor.address || undefined,
-    sponsorship_agreement_url: sponsor.sponsorship_agreement_url || undefined,
-    receipt_url: sponsor.receipt_url || undefined,
-    updated_at: sponsor.updated_at || undefined,
-    tiers: sponsor.tiers ? { amount: sponsor.tiers.amount || 0 } : undefined
+    tiers: sponsor.tiers ? {
+      id: sponsor.tiers.id,
+      name: sponsor.tiers.name || 'Unnamed Tier',
+      amount: sponsor.tiers.amount || 0,
+      type: sponsor.tiers.type || 'Standard',
+      created_at: sponsor.tiers.created_at
+    } : undefined
   }))
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)

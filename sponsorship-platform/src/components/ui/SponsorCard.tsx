@@ -1,30 +1,33 @@
-interface SponsorCardProps {
-  sponsor: {
-    id: string;
-    name: string;
-    logo_url?: string;
-    contact_name?: string;
-    contact_email?: string;
-    contact_phone?: string;
-    address?: string;
-    fulfilled: boolean;
-    sponsorship_agreement_url?: string;
-    receipt_url?: string;
-    created_at: string;
-    updated_at?: string;
-    tiers?: {
-      amount: number;
-    };
-  };
-  showDetails?: boolean;
+interface SponsorTier {
+  id?: string;
+  name: string;
+  amount: number;
+  type: 'Standard' | 'Custom';
+  created_at?: string;
 }
 
-interface SponsorCardCompactProps {
-  sponsor: SponsorCardProps['sponsor']
-  showDetails?: boolean
-  onViewMore?: () => void
-  userRole?: string
-  onEdit?: () => void
+interface Sponsor {
+  id: string;
+  name: string;
+  logo_url?: string | null;
+  contact_name?: string | null;
+  contact_email?: string | null;
+  contact_phone?: string | null;
+  address?: string | null;
+  fulfilled: boolean;
+  sponsorship_agreement_url?: string | null;
+  receipt_url?: string | null;
+  created_at: string;
+  updated_at?: string | null;
+  tiers?: SponsorTier;
+}
+
+interface SponsorCardProps {
+  sponsor: Sponsor;
+  showDetails?: boolean;
+  onViewMore?: () => void;
+  userRole?: string;
+  onEdit?: () => void;
 }
 
 export default function SponsorCard({ 
@@ -33,7 +36,7 @@ export default function SponsorCard({
   onViewMore, 
   userRole, 
   onEdit 
-}: SponsorCardCompactProps) {
+}: SponsorCardProps) {
   const isManagerOrAdmin = userRole === 'manager' || userRole === 'admin'
   
   return (
@@ -63,13 +66,15 @@ export default function SponsorCard({
           {sponsor.tiers && (
             <div className="flex items-center gap-2 mb-2">
               <span className={`inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                sponsor.tiers.type === 'Custom' 
+                sponsor.tiers?.type === 'Custom' 
                   ? 'bg-purple-100 text-purple-800'
                   : 'bg-blue-100 text-blue-800'
               }`}>
-                {sponsor.tiers.name}
+                {sponsor.tiers?.name || 'No Tier'}
               </span>
-              <span className="text-xs text-gray-500">{sponsor.tiers.type} Tier</span>
+              {sponsor.tiers?.type && (
+                <span className="text-xs text-gray-500">{sponsor.tiers.type} Tier</span>
+              )}
             </div>
           )}
         </div>
