@@ -5,7 +5,6 @@ import { promoteToManager, demoteFromManager } from './actions'
 export default async function UserRolesPage() {
   const supabase = await createClient()
 
-  // Check if user is authenticated
   const { data: userData, error: userError } = await supabase.auth.getUser()
   if (userError || !userData?.user) {
     redirect('/login')
@@ -14,8 +13,7 @@ export default async function UserRolesPage() {
   // Get user profile to check role and approval status
   const { data: profile, error: profileError } = await supabase
     .from('user_profiles')
-    .select('role, is_approved')
-    .eq('user_id', userData.user.id)
+    .select('role, is_approved, full_name, email')
     .single()
 
   // Check if user has admin role and is approved (only admins can manage roles)
